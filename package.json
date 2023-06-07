@@ -1,0 +1,30 @@
+{
+    "name": "tiny-ts-lib-starter",
+    "version": "1.0.0",
+    "description": "ts lib starter",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "exports": {
+        "require": "./dist/index.js",
+        "import": "./dist/index.mjs"
+    },
+    "types": "dist/types/index.d.ts",
+    "scripts": {
+        "build-fast": "tsup src/index.ts --format cjs,esm --minify",
+        "build": "yarn build-fast --dts",
+        "test": "uvu -r sucrase/register --ignore fixture",
+        "prettier": "prettier  --write src/*",
+        "lint": "eslint",
+        "build:types": "tsc --emitDeclarationOnly"
+    },
+    "license": "MIT",
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "4.1.1",
+        "@typescript-eslint/parser": "4.1.1",
+        "eslint": "7.9.0",
+        "prettier": "2.1.1",
+        "tsup": "5.11.7",
+        "typescript": "4.0.2",
+        "uvu": "0.5.2"
+    }
+}
