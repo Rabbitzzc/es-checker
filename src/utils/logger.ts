@@ -1,0 +1,26 @@
+class Logger {
+  #colors =  {
+    info:'\x1b[32m', // 绿色
+    warn: '\x1b[33m', // 黄色
+    error: '\x1b[31m', // 红色
+  };
+
+  log(type, message) {
+    const color = this.#colors[type] || ''; 
+    console.log(`${color}[${type.toUpperCase()}] ${message}\x1b[0m`);
+  }
+
+  warn(message) {
+    this.log('warn', message);
+  }
+
+  info(message) {
+    this.log('info', message);
+  }
+
+  error(message) {
+    this.log('error', message);
+  }
+}
+
+export const logger = new Logger();
