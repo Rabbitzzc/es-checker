@@ -1,5 +1,6 @@
 export type ConfigType = {
-  ignore?: string | string[] // some files to ignore
+  dir?: string;  // cwd
+  ignore?: string | string[]; // some files to ignore
 }
 
 export type EcmaVersionSimpleType = 'es6' | 'es7' | 'es8' | 'es9' | 'es10' | 'es11' | 'es12'

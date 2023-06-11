@@ -1,89 +1,73 @@
-import { ConfigType, CorCheckOptionsType, EcmaVersionType } from "./type";
-import { logger } from "./utils/logger";
+import { ConfigType, CorCheckOptionsType, EcmaVersionType } from "./type"
+import { logger } from "./utils/logger"
+import { getRealEcmaVersion } from './utils'
 
-const coreCheck = (files:string[], options:CorCheckOptionsType)=>{
 
+const fg = require('fast-glob')
+const fs = require('fs-extra')
+const path = require('path')
+const babelParser = require('@babel/parser')
+const traverse = require('@babel/traverse').default
+
+
+const coreCheck = async (files: string[], options: CorCheckOptionsType) => {
+  const { dir = './' } = options
+
+  console.log('[es-checker] search files...')
+  const fileNames: string[] = await fg(files, {
+    cwd: dir,
+    onlyFiles: true
+  })
+  console.log('[es-checker] some files to be queried', fileNames)
+  // const esFiles = [];
+  fileNames.forEach(async file => {
+    const fullPath = path.join(dir, file)
+
+    const code = await fs.readFile(fullPath, 'utf8')
+
+    const ast = babelParser.parse(code, {
+      sourceType: 'module',
+      plugins: ['jsx', 'typescript']
+    })
+
+    traverse(ast, {
+      enter(path: any) {
+        console.error('enterPath', path.node.type)
+      }
+    })
+
+  })
 }
 
-const getRealEcmaVersion = (target:EcmaVersionType)=>{
-  let ecmaVersion = ''
-  switch (target) {
-    case 'es6':
-      ecmaVersion = '6'
-      break
-    case 'es7':
-      ecmaVersion = '7'
-      break
-    case 'es8':
-      ecmaVersion = '8'
-      break
-    case 'es9':
-      ecmaVersion = '9'
-      break
-    case 'es10':
-      ecmaVersion = '10'
-      break
-    case 'es11':
-      ecmaVersion = '11'
-      break
-    case 'es12':
-      ecmaVersion = '12'
-      break
-    case 'es2015':
-      ecmaVersion = '6'
-      break
-    case 'es2016':
-      ecmaVersion = '7'
-      break
-    case 'es2017':
-      ecmaVersion = '8'
-      break
-    case 'es2018':
-      ecmaVersion = '9'
-      break
-    case 'es2019':
-      ecmaVersion = '10'
-      break
-    case 'es2020':
-      ecmaVersion = '2020'
-      break
-    case 'es2021':
-      ecmaVersion = '2021'
-      break
-    case 'es2022':
-      ecmaVersion = '2022'
-      break
-    case 'es2023':
-      ecmaVersion = '2023'
-      break
-    default:
-      logger.error('Invalid ecmaScript version, The default version(es6) will be selected.')
-      ecmaVersion = '6'
-  }
-  return ecmaVersion;
-}
 
-const ecmaCheck = (filesArgs:string|string[], target:EcmaVersionType='es6', config: ConfigType) =>{
-  if(!filesArgs) {
+
+const ecmaCheck = (filesArgs: string | string[], target: EcmaVersionType = 'es6', config: ConfigType) => {
+  if (!filesArgs) {
     return logger.warn('filesArgs cannot be empty.')
   }
   let files = []
-  if(typeof filesArgs === 'string') {
+  if (typeof filesArgs === 'string') {
     files = [filesArgs]
   } else {
     files = filesArgs
   }
 
-  const esVersion = getRealEcmaVersion(target);
+  console.log('[es-checker] confirm es version...')
+  const esVersion = getRealEcmaVersion(target)
+  console.log(`[es-checker] es version confirmed: ${esVersion}`)
 
   const options = {
     target: esVersion,
     ...config
   }
-  coreCheck(files, options);
+  coreCheck(files, options)
 
 }
 
 
 export default ecmaCheck;
 
+
+ecmaCheck('test1.js', 'es6', {
+  dir: 'test/es6'
+})

@@ -1,12 +1,15 @@
 {
     "compilerOptions": {
-        "target": "es2020",
-        "module": "esnext",
+        "strict": true,
+        "target": "ES6",
+        "module": "CommonJS",
         "declaration": true,
         "declarationDir": "dist/types",
         "skipLibCheck": true,
         "noUnusedLocals": true,
         "outDir": "./dist",
+        "allowSyntheticDefaultImports": true,
+        "moduleResolution": "node",
     },
     "include": [
         "src/**/*"
