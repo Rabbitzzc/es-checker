@@ -32,7 +32,7 @@ const coreCheck = async (files: string[], options: CorCheckOptionsType) => {
 
     traverse(ast, {
       enter(path: any) {
-        console.error('enterPath', path.node.type)
+        console.error('enterPath', path.node)
       }
     })
 
