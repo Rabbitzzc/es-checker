@@ -108,9 +108,10 @@ class ES6Rules implements ESRulesType {
     return false;
   }
 
-  api(path: any) {
-    const node = path.node;
-    const callee = path.node.callee;
+  api(node: any) {
+    const callee = node.callee;
+
+    if(!callee) return false;
 
     // use Promise --- new Promise
     if (node.type === 'Identifier' && callee.name === 'Promise') {

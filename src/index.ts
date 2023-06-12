@@ -1,6 +1,7 @@
 import { ConfigType, CorCheckOptionsType, EcmaVersionType } from "./type"
 import { logger } from "./utils/logger"
 import { getRealEcmaVersion } from './utils'
+import rules from "./rules"
 
 
 const fg = require('fast-glob')
@@ -10,9 +11,10 @@ const babelParser = require('@babel/parser')
 const traverse = require('@babel/traverse').default
 
 
-const coreCheck = async (files: string[], options: CorCheckOptionsType) => {
-  const { dir = './' } = options
+const coreCheck = async (options: CorCheckOptionsType) => {
+  const { dir = './', files = [],target } = options
 
+  let checkResult = false;
   console.log('[es-checker] search files...')
   const fileNames: string[] = await fg(files, {
     cwd: dir,
@@ -32,10 +34,17 @@ const coreCheck = async (files: string[], options: CorCheckOptionsType) => {
 
     traverse(ast, {
       enter(path: any) {
-        console.error('enterPath', path.node)
+        // console.error('enterPath', path.node)
+        const rule = rules[target];
+        if(rule.grammar(path.node) || rule.api(path.node)) {
+          logger.info(`The target was detected.`)
+          path.stop();
+          checkResult = true;
+        }
       }
     })
 
+    return checkResult;
   })
 }
 
@@ -57,10 +66,11 @@ const ecmaCheck = (filesArgs: string | string[], target: EcmaVersionType = 'es6'
   console.log(`[es-checker] es version confirmed: ${esVersion}`)
 
   const options = {
+    files,
     target: esVersion,
     ...config
   }
-  coreCheck(files, options)
+  coreCheck(options)
 
 }
 
