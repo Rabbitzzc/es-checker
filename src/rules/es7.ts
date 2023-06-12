@@ -3,8 +3,8 @@ import ESRulesType from './type';
 class ES7Rules implements ESRulesType {
   description = 'es7 rules'
 
-  // Exponentiation Operator
   grammar(node: any) {
+    // Exponentiation Operator
     if(node.type === 'BinaryExpression' && node.operator === '**') {
       return true;
     }
