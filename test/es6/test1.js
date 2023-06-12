@@ -1,2 +1,1 @@
-const a = Promise
-new a()
+2 ** 3

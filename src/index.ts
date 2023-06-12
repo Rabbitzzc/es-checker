@@ -34,7 +34,7 @@ const coreCheck = async (options: CorCheckOptionsType) => {
 
     traverse(ast, {
       enter(path: any) {
-        // console.error('enterPath', path.node)
+        console.error('enterPath', path.node)
         const rule = rules[target];
         if(rule.grammar(path.node) || rule.api(path.node)) {
           logger.info(`The target was detected.`)
