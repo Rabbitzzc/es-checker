@@ -1,7 +1,7 @@
 {
-    "name": "tiny-ts-lib-starter",
-    "version": "1.0.0",
-    "description": "ts lib starter",
+    "name": "tiny-es-checker",
+    "version": "0.0.1",
+    "description": "Check whether ES syntax and APIs are used in the code.",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "exports": {

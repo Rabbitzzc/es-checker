@@ -1,19 +1,9 @@
 import ESRulesType from './type';
 
-class ES8Rules implements ESRulesType {
-  description = 'es8 rules'
+class ES10Rules implements ESRulesType {
+  description = 'es6 rules'
 
   grammar(node: any) {
-
-    // async function a(){}
-    if(node.type === 'FunctionDeclaration' && node.async === true) {
-      return true;
-    }
-
-    // await 1
-    if(node.type === 'AwaitExpression') {
-      return true;
-    }
     return false;
   }
 
@@ -22,33 +12,45 @@ class ES8Rules implements ESRulesType {
 
     if(!callee) return false;
 
-    // Object.values  Object.entries Object.getOwnPropertyDescriptors
+    // Object.fromEntries
     if (callee.type === 'MemberExpression') {
       const object = callee.object;
       const property = callee.property;
-      const methods = ['values', 'entries', 'getOwnPropertyDescriptors']
+      const methods = ['fromEntries'];
 
       if (object.type === 'Identifier' && object.name === 'Object' && methods.includes(property?.name)) {
         return true
       }
     }
 
-    // String.padEnd(Start)
+    // String.trimStart trimEnd matchAll
     if (callee.type === 'MemberExpression') {
       const object = callee.object;
       const property = callee.property;
-      const methods = ['padStart', 'padEnd']
+      const methods = ['trimStart', 'trimEnd', 'matchAll'];
 
       if (object.type === 'Identifier' && object.name === 'StringLiteral' && methods.includes(property?.name)) {
         return true
       }
     }
 
-    
+    // Array.flat flatMap methods
+    if (callee.type === 'MemberExpression') {
+      const object = callee.object;
+      const property = callee.property;
+
+      const methods = ['flat', 'flatMap'];
+      if (object.type === 'Identifier' && object.name === 'ArrayExpression' &&  methods.includes(property?.name)) {
+        return true
+      }
+    }
+
+
+
 
     return false;
   }
 }
 
-export const es8RulesCheck = new ES8Rules();
+export const es10RulesCheck = new ES10Rules();
 

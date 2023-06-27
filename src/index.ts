@@ -12,16 +12,16 @@ const traverse = require('@babel/traverse').default
 
 
 const coreCheck = async (options: CorCheckOptionsType) => {
-  const { dir = './', files = [],target } = options
+  const { dir = './', files = [], target, ignore = [] } = options
 
   let checkResult = false;
   console.log('[es-checker] search files...')
   const fileNames: string[] = await fg(files, {
     cwd: dir,
-    onlyFiles: true
+    onlyFiles: true,
+    ignore
   })
   console.log('[es-checker] some files to be queried', fileNames)
-  // const esFiles = [];
   fileNames.forEach(async file => {
     const fullPath = path.join(dir, file)
 
@@ -29,14 +29,17 @@ const coreCheck = async (options: CorCheckOptionsType) => {
 
     const ast = babelParser.parse(code, {
       sourceType: 'module',
-      plugins: ['jsx', 'typescript']
+      plugins: [
+        'jsx',
+        'typescript',
+      ]
     })
 
     traverse(ast, {
       enter(path: any) {
         console.error('enterPath', path.node)
         const rule = rules[target];
-        if(rule.grammar(path.node) || rule.api(path.node)) {
+        if (rule.grammar(path.node) || rule.api(path.node)) {
           logger.info(`The target was detected.`)
           path.stop();
           checkResult = true;
@@ -49,8 +52,7 @@ const coreCheck = async (options: CorCheckOptionsType) => {
 }
 
 
-
-const ecmaCheck = (filesArgs: string | string[], target: EcmaVersionType = 'es6', config: ConfigType) => {
+const ecmaCheck = (filesArgs: string | string[], target: EcmaVersionType = 'es6', config: ConfigType = {}) => {
   if (!filesArgs) {
     return logger.warn('filesArgs cannot be empty.')
   }
@@ -76,8 +78,3 @@ const ecmaCheck = (filesArgs: string | string[], target: EcmaVersionType = 'es6'
 
 
 export default ecmaCheck;
-
-
-ecmaCheck('test1.js', 'es6', {
-  dir: 'test/es6'
-})
