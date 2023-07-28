@@ -64,3 +64,6 @@ type ConfigType = {
 ```
 
 
+## TODO
+ 
+- [ ] bin command support
