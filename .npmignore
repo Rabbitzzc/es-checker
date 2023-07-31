@@ -8,3 +8,5 @@ src
 
 # 忽略所有测试文件
 test/
+
+yarn-error.log
